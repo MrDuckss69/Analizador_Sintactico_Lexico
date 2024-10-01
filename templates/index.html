@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Léxico y Sintáctico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Análisis Léxico y Sintáctico</h1>
+        <form method="POST">
+            <textarea name="text" rows="10" cols="50">{{ text }}</textarea><br>
+            <input type="submit" value="Analizar">
+            <input type="reset" value="Borrar" onclick="clearResults()">
+        </form>
+
+        {% if error_message %}
+            <h3 style="color: red;">Error: {{ error_message }}</h3>
+        {% endif %}
+
+        {% if sintactic_result %}
+            <div class="sintactic-result">
+                <h2>Estructura Sintáctica Correcta:</h2>
+                <p>{{ sintactic_result }}</p>
+            </div>
+        {% elif sintactic_error %}
+            <div class="sintactic-error">
+                <h2>Error Sintáctico:</h2>
+                <p>{{ sintactic_error }}</p>
+            </div>
+        {% endif %}
+
+        <div class="tables-container">
+            <h2>Tokens Identificados:</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Línea</th>
+                        <th>Token</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if tokens %}
+                        {% for token in tokens %}
+                            <tr>
+                                <td>{{ token[0] }}</td>
+                                <td>{{ token[1] }}</td>
+                                <td>{{ token[2] }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No se encontraron tokens.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <h2>Información de la línea:</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Línea</th>
+                        <th>Tipo de palabra</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if line_info %}
+                        {% for info in line_info %}
+                            <tr>
+                                <td>{{ info[0] }}</td>
+                                <td>{{ info[1] }}</td>
+                                <td>{{ info[2] }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No se encontró información de la línea.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function clearResults() {
+            // Limpiar el contenido del textarea
+            document.querySelector('textarea[name="text"]').value = '';
+
+            // Limpiar resultados sintácticos
+            document.querySelector('.sintactic-result')?.remove();
+            document.querySelector('.sintactic-error')?.remove();
+
+            // Limpiar tablas
+            const tokenTableBody = document.querySelector('table:nth-of-type(1) tbody');
+            const lineInfoTableBody = document.querySelector('table:nth-of-type(2) tbody');
+            
+            // Limpiar contenido de las tablas
+            tokenTableBody.innerHTML = '<tr><td colspan="3">No se encontraron tokens.</td></tr>';
+            lineInfoTableBody.innerHTML = '<tr><td colspan="3">No se encontró información de la línea.</td></tr>';
+        }
+    </script>
+</body>
+</html>
